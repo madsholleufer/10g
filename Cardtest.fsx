@@ -72,7 +72,40 @@ let Randomizer() =
     let x = gen.Next(0, deck.Length) //indtil sidste indeks som ved starten er 51. 
     CardDraw (x)
 
-printfn "%A" (deck.Length)
-for i = 0 to 51 do
-    printfn "Kort i dækket: %A" (Randomizer())
+type Player() =
+    //let mutable isBust() = false
+    let mutable handValue = 0
+    let mutable hand : Card [] = [||]
+    //member this.IsBust () = isBust
+    //member this.Stand () = nextTurn ()
+    member this.Handvalue() = handValue
+    member this.Hand() = hand
+    member this.Hit () = 
+        // træk et kort
+        let newCard = Randomizer()
+        //tilføjer kortet til hånden
+        hand <- (Array.append hand [|newCard|])
+        // opdaterer den samlede værdi
+        handValue <- handValue + newCard.Value
+        (*
+        Hvis det er et es, man har trukket:
+        handValue <- handValue + newCard
+        if (newCard.Value = 1)
+            eshandValue <- handValue + 10
+        *)
+        // hvis det nye kort medfører at den samlede værdi er 
+        // over 21, så
 
+        //isBust <- true
+        // spillet slutter!
+
+        // ellers læg værdien til den samlede værdi
+        // næste spilers tur
+        //nextTurn ()
+        
+(*let Isabella = new Player() 
+for j = 0 to 5 do
+    Isabella.Hit()
+for i = 0 to Isabella.Hand().Length-1 do
+    printfn "%A" (Isabella.Hand().[i])
+*)
