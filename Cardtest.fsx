@@ -62,9 +62,10 @@ let gen = System.Random()
 
 let CardDraw (x : int) = 
     //giver spilleren kortet soon tm, GiveCard funktionen skal give kortet.
+    let returncard = (deck.[x])
     // Fjerner element fra array
     deck <- deck |> Array.filter ((<>)deck.[x])
-    deck.Length
+    returncard
 
     
 let Randomizer() =
