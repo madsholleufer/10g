@@ -1,7 +1,7 @@
 type Player =
     let mutable isBust = false
     let mutable handValue = 0
-    let mutable hand : Card = [||]
+    let mutable hand : Card [] = [||]
     //member this.IsBust () = isBust
     //member this.Stand () = nextTurn ()
     member this.Hit () = 
@@ -20,9 +20,10 @@ type Player =
         // hvis det nye kort medfører at den samlede værdi er 
         // over 21, så
 
-        isBust <- true
+        //isBust <- true
         // spillet slutter!
 
         // ellers læg værdien til den samlede værdi
-        handValue <- handValue + value
-        nextTurn ()
+        // næste spilers tur
+        //nextTurn ()
+        
