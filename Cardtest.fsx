@@ -75,6 +75,7 @@ let Randomizer() =
 type Player() =
     //let mutable isBust() = false
     let mutable handValue = 0
+    
     let mutable hand : Card [] = [||]
     //member this.IsBust () = isBust
     member this.Handvalue() = handValue
@@ -116,4 +117,19 @@ for i = 0 to Isabella.Hand().Length-1 do
 
 type Dealer() =
     inherit Player()
+    
+printfn "How many players? "
+let PlayerNumber = int (System.Console.ReadLine())
+match PlayerNumber with
+| x when x < 1 -> failwith "Too few players"
+| x when x > 5 -> failwith "Too many players"
+| _ -> "TIME TO GO"
+
+//let playergenerator = 
+
+for i = 1 to PlayerNumber do
+    let istring = (i.ToString())
+    let mutable name = String.concat "" ["player"; istring]
+    let name = new Player() 
+    printfn "%A" (name)
     
