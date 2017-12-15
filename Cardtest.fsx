@@ -123,13 +123,16 @@ let PlayerNumber = int (System.Console.ReadLine())
 match PlayerNumber with
 | x when x < 1 -> failwith "Too few players"
 | x when x > 5 -> failwith "Too many players"
-| _ -> "TIME TO GO"
+| _ -> printfn "TIME TO GO"
 
-//let playergenerator = 
+let playerarray = Array.create PlayerNumber (new Player()) 
 
-for i = 1 to PlayerNumber do
-    let istring = (i.ToString())
-    let mutable name = String.concat "" ["player"; istring]
-    let name = new Player() 
-    printfn "%A" (name)
+for i = 0 to PlayerNumber-1 do //Opretter player objekter
+    for j = 0 to 1 do
+        playerarray.[i].Hit() 
+    printfn "Handvalue: %A" (playerarray.[i].Handvalue())
+
+
+    
+
     

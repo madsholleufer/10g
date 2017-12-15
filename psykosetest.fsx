@@ -1,3 +1,4 @@
+
 printfn "How many players? "
 let PlayerNumber = int (System.Console.ReadLine())
 match PlayerNumber with
@@ -10,5 +11,5 @@ match PlayerNumber with
 for i = 1 to PlayerNumber do
     let istring = (i.ToString())
     let mutable name = String.concat "" ["player"; istring]
-    //let player = new Player() 
+    let name = new Player() 
     printfn "%A" (name)
