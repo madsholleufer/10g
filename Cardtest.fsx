@@ -77,7 +77,6 @@ type Player() =
     let mutable handValue = 0
     let mutable hand : Card [] = [||]
     //member this.IsBust () = isBust
-    //member this.Stand () = nextTurn ()
     member this.Handvalue() = handValue
     member this.Hand() = hand
     member this.Hit () = 
@@ -109,3 +108,12 @@ for j = 0 to 5 do
 for i = 0 to Isabella.Hand().Length-1 do
     printfn "%A" (Isabella.Hand().[i])
 *)
+
+//Implemantation af spillet:
+//skal initialisere spillet, 
+
+//user input antallet af spillere
+
+type Dealer() =
+    inherit Player()
+    
