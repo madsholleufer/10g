@@ -1,6 +1,11 @@
-type Card (ID : int, value : int, name : string) =
+open System.Web.Compilation
+open System.Xml.Schema
+open System.Timers
+type Card (ID : int, cardvalue : int, name : string) =
+    let mutable value = cardvalue
     member this.CardID() = ID
     member this.Value = value
+    member this.SetValue(newvalue : int) = value <- newvalue 
     member this.Name = name
 
 let eshjerte = new Card(1,1,"eshjerte")
@@ -85,54 +90,129 @@ type Player() =
         let newCard = Randomizer()
         //tilføjer kortet til hånden
         hand <- (Array.append hand [|newCard|])
-        // opdaterer den samlede værdi
-        handValue <- handValue + newCard.Value
-        (*
-        Hvis det er et es, man har trukket:
-        handValue <- handValue + newCard
-        if (newCard.Value = 1)
+        // Hvis kortet er et es og værdien af handvalue er mindre end 11, så bruges et es som 11, ellers bruges det som 1
+        if newCard.Value = 1 && handValue < 11 then
+            hand.[hand.Length-1].SetValue(11) //opdaterer værdien af det nye kort med 11
+            handValue <- handValue + 11
+        else
+            handValue <- handValue + newCard.Value
+        // Hvis det er et es, man har trukket:
+        (*if (newCard.Value = 1) then
             eshandValue <- handValue + 10
         *)
-        // hvis det nye kort medfører at den samlede værdi er 
-        // over 21, så
-
-        //isBust <- true
-        // spillet slutter!
 
         // ellers læg værdien til den samlede værdi
-        // næste spilers tur
-        //nextTurn ()
-        
-(*let Isabella = new Player() 
-for j = 0 to 5 do
-    Isabella.Hit()
-for i = 0 to Isabella.Hand().Length-1 do
-    printfn "%A" (Isabella.Hand().[i])
-*)
 
-//Implemantation af spillet:
-//skal initialisere spillet, 
-
-//user input antallet af spillere
 
 type Dealer() =
     inherit Player()
     
-printfn "How many players? "
+printfn "Hvor mange spillere? "
 let PlayerNumber = int (System.Console.ReadLine())
 match PlayerNumber with
 | x when x < 1 -> failwith "Too few players"
 | x when x > 5 -> failwith "Too many players"
 | _ -> printfn "TIME TO GO"
-
-let playerarray = Array.create PlayerNumber (new Player()) 
-
+// Laver et tomt Player array
+let playerarray : Player array = Array.zeroCreate PlayerNumber 
+//overskriver indekset for hver spiller med et nyt player objekt.
 for i = 0 to PlayerNumber-1 do //Opretter player objekter
-    for j = 0 to 1 do
-        playerarray.[i].Hit() 
-    printfn "Handvalue: %A" (playerarray.[i].Handvalue())
+    playerarray.[i] <- new Player()
+    for j = 0 to 1 do //kalder hit metoden to gange for at hver spiller starter med 2 kort
+        playerarray.[i].Hit()
 
+// AI
+printfn "Hvor mange AI? "
+let AINumber = int (System.Console.ReadLine())
+match AINumber with
+| x when x < 1 -> failwith "Too few AI"
+| x when x > 5 -> failwith "Too many AI"
+| _ -> printfn "TIME TO GO"
+// Laver et tomt Player array
+let AIarray : Player array = Array.zeroCreate AINumber 
+//overskriver indekset for hver spiller med et nyt player objekt.
+for i = 0 to AINumber-1 do //Opretter player objekter
+    AIarray.[i] <- new Player()
+    for j = 0 to 1 do //kalder hit metoden to gange for at hver spiller starter med 2 kort
+        AIarray.[i].Hit()
 
-    
+// Definerer dealer og giver dealer to kort
+let dealer = Dealer()
+for j = 0 to 1 do //kalder hit metoden to gange for at dealer starter med 2 kort
+    dealer.Hit()
 
-    
+// Funktion der viser kortenes værdier
+let PrintHands() = 
+    // Printer spillernes hænder
+    for i = 0 to PlayerNumber-1 do
+        printfn "Player %is hånd: " (i+1)
+        let mutable handlength = playerarray.[i].Hand().Length    
+        for j = 0 to handlength-1 do
+            printf "%A, værdi: %A \t" (playerarray.[i].Hand().[j].Name) (playerarray.[i].Hand().[j].Value)
+        printfn ""
+    // Printer AI hænder
+    for l = 0 to AINumber-1 do
+        printfn "AI nummer %is hånd: " (l+1)
+        let mutable AIHand = AIarray.[l].Hand().Length
+        for j = 0 to AIHand-1 do
+            printf "%A, værdi: %A \t" (AIarray.[l].Hand().[j].Name) (AIarray.[l].Hand().[j].Value)
+        printfn ""
+    // Printer dealers hånd
+    printfn "Dealers hånd:"
+    for k = 0 to dealer.Hand().Length-1 do
+        printf "%A, værdi: %A \t" (dealer.Hand().[k].Name) (dealer.Hand().[k].Value)
+    printfn ""
+
+// Spillernes tur (players)
+for i = 0 to PlayerNumber-1 do
+    PrintHands()
+    printfn "Player %i's tur" (i+1)
+    printfn "HIT or STAND??"
+    let mutable stand = false
+    while not stand do
+        match System.Console.ReadLine() with
+        | "HIT" -> playerarray.[i].Hit() 
+                   PrintHands()
+                   if playerarray.[i].Handvalue() > 21 then
+                    stand <- true
+                    printfn "YOU ARE BUST"
+        | "STAND" -> printfn "sleep tight"
+                     stand <- true
+        | _ -> printfn "Wrong Input"
+
+//AI tur
+printfn "AIs tur"
+for i = 0 to AIarray.Length-1 do
+    while AIarray.[i].Handvalue() < 17 do
+        AIarray.[i].Hit()
+printfn "AIs hånd:"
+for i = 0 to AIarray.Length-1 do
+    printf "AI nummer %A:" i
+    for j = 0 to AIarray.[i].Hand().Length-1 do
+        printf "%A, værdi: %A \t" (AIarray.[i].Hand().[j].Name) (AIarray.[i].Hand().[j].Value)
+    printfn ""
+
+//Dealers tur
+printfn "Dealers tur"
+while dealer.Handvalue() < 17 do
+    dealer.Hit()
+ 
+printfn "Dealers hånd:"
+for k = 0 to dealer.Hand().Length-1 do
+    printf "%A, værdi: %A \t" (dealer.Hand().[k].Name) (dealer.Hand().[k].Value)
+printfn ""
+
+if dealer.Handvalue() > 21 then
+    printfn "DEALER IS BUST"
+// Players: Hvem har vundet?
+for i = 0 to PlayerNumber-1 do
+    if playerarray.[i].Handvalue() < 22 && dealer.Handvalue() < 22 && playerarray.[i].Handvalue() > dealer.Handvalue() || dealer.Handvalue() > 21 && playerarray.[i].Handvalue() < 22 then
+        printfn "Player %i har vundet! :-)" (i+1)
+    else 
+        printfn "Player %i har tabt! :-(" (i+1)
+// AIs: Hvem har vundet?
+for i = 0 to AINumber-1 do
+    if AIarray.[i].Handvalue() < 22 && dealer.Handvalue() < 22 && AIarray.[i].Handvalue() > dealer.Handvalue() || AIarray.[i].Handvalue() < 22 && dealer.Handvalue() > 21  then
+        printfn "AI %i har vundet! :-)" (i+1)
+    else 
+        printfn "AI %i har tabt! :-(" (i+1)
