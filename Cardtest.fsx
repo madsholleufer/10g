@@ -1,13 +1,13 @@
-open System.Web.Compilation
-open System.Xml.Schema
-open System.Timers
+// Kort klasse, der indeholder kortets værdi, ID samt et navn på kortet.
 type Card (ID : int, cardvalue : int, name : string) =
     let mutable value = cardvalue
     member this.CardID() = ID
     member this.Value = value
-    member this.SetValue(newvalue : int) = value <- newvalue 
+    // Gør det muligt at overskrive kortets værdi. Bruges når kortet er et es, hvilket kan være 1 eller 11.
+    member this.SetValue(newvalue : int) = value <- newvalue
     member this.Name = name
-
+    
+// Definerer kortene
 let eshjerte = new Card(1,1,"eshjerte")
 let tohjerte = new Card(2,2,"tohjerte")
 let trehjerte = new Card(3,3,"trehjerte")
@@ -61,48 +61,45 @@ let knægtspade = new Card(50,10,"knægtspade")
 let damespade = new Card(51,10,"damespade")
 let kongespade = new Card(52,10,"kongespade")
 
+// Definerer dækket
 let mutable deck = [|eshjerte;tohjerte;trehjerte;firehjerte;femhjerte;sekshjerte;syvhjerte;ottehjerte;nihjerte;tihjerte;knægthjerte;damehjerte;kongehjerte;esrude;torude;trerude;firerude;femrude;seksrude;syvrude;otterude;nirude;tirude;knægtrude;damerude;kongerude;esspar;tospar;trespar;firespar;femspar;seksspar;syvspar;ottespar;nispar;tispar;knægtspar;damespar;kongespar;esspade;tospade;trespade;firespade;femspade;seksspade;syvspade;ottespade;nispade;tispade;knægtspade;damespade;kongespade|]
+// Til at generere et tilfældigt tal
 let gen = System.Random()
 
-
+// Funktion der trækker et kort fra dækket. Den kaldes i Randomizer() funktionen, se nedenfor.
 let CardDraw (x : int) = 
-    //giver spilleren kortet soon tm, GiveCard funktionen skal give kortet.
+    // trækker et kort
     let returncard = (deck.[x])
-    // Fjerner element fra array
+    // Fjerner kortet fra dækket
     deck <- deck |> Array.filter ((<>)deck.[x])
     returncard
 
-    
+// Funktion der genererer et tal mellem 0 og 51 inklusive, og som kalder funktionen CardDraw()
+// for at trække et kort fra dækket på det index i dæk arrayet.
 let Randomizer() =
-    let x = gen.Next(0, deck.Length) //indtil sidste indeks som ved starten er 51. 
+    let x = gen.Next(0, deck.Length) // indtil sidste indeks som ved starten er 51. 
     CardDraw (x)
 
+// Spiller klasse, som har en korthånd, en korthåndværdi samt nogle metoder, der beskrives nedenfor.
 type Player() =
-    //let mutable isBust() = false
     let mutable handValue = 0
-    
-    let mutable hand : Card [] = [||]
-    //member this.IsBust () = isBust
+    let mutable hand : Card [] = [||] // korthånden er et array af kort
+    // metode, der returnerer korthåndværdien
     member this.Handvalue() = handValue
+    // metode, der returnerer korthånden
     member this.Hand() = hand
+    // metode, der giver spilleren et kort. Metoden kalder Randomizer() funktionen.
     member this.Hit () = 
-        // træk et kort
+        // trækker et kort vha. Randomizer()
         let newCard = Randomizer()
-        //tilføjer kortet til hånden
+        // tilføjer kortet til hånden
         hand <- (Array.append hand [|newCard|])
-        // Hvis kortet er et es og værdien af handvalue er mindre end 11, så bruges et es som 11, ellers bruges det som 1
+        // Hvis kortet er et es og værdien af korthånden er mindre end 11, så bruges et es som 11
         if newCard.Value = 1 && handValue < 11 then
-            hand.[hand.Length-1].SetValue(11) //opdaterer værdien af det nye kort med 11
-            handValue <- handValue + 11
-        else
+            hand.[hand.Length-1].SetValue(11) //opdaterer værdien af det nye kort til at være 11
+            handValue <- handValue + 11 //tilføjer til korthåndværdien
+        else // hvis korthånden er 11 eller større bruges et es som 1
             handValue <- handValue + newCard.Value
-        // Hvis det er et es, man har trukket:
-        (*if (newCard.Value = 1) then
-            eshandValue <- handValue + 10
-        *)
-
-        // ellers læg værdien til den samlede værdi
-
 
 type Dealer() =
     inherit Player()
