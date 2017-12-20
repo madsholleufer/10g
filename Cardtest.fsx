@@ -62,15 +62,19 @@ let kongeklør = new Card(10,"kongeklør")
 
 // Definerer dækket
 let mutable deck = [|eshjerte;tohjerte;trehjerte;firehjerte;femhjerte;sekshjerte;syvhjerte;ottehjerte;nihjerte;tihjerte;knægthjerte;damehjerte;kongehjerte;esrude;torude;trerude;firerude;femrude;seksrude;syvrude;otterude;nirude;tirude;knægtrude;damerude;kongerude;esspar;tospar;trespar;firespar;femspar;seksspar;syvspar;ottespar;nispar;tispar;knægtspar;damespar;kongespar;esklør;toklør;treklør;fireklør;femklør;seksklør;syvklør;otteklør;niklør;tiklør;knægtklør;dameklør;kongeklør|]
-// Til at generere et tilfældigt tal
+// Nedenstående bruges til at generere et tilfældigt tal
 let gen = System.Random()
 
-// Funktion der trækker et kort fra dækket. Den kaldes i Randomizer() funktionen, se nedenfor.
+(* Funktion der trækker et kort fra dækket. 
+    Den kaldes i Randomizer() funktionen, se nedenfor.
+    Input til funktionen er et heltal, som er det tal, der genereres 
+    i Randomizer(). Funktionen returnerer et kort af typen Card. *)
 let CardDraw (x : int) = 
     // trækker et kort vha. indeksering i dæk arrayet.
     let returncard = (deck.[x])
     // Fjerner kortet fra dækket
     deck <- deck |> Array.filter ((<>)deck.[x])
+    // returnerer kortet, der blev trukket
     returncard
 
 (* Funktion der genererer et tal, der svarer til et indeks i dæk arrayet. 
