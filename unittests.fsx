@@ -1,7 +1,6 @@
-(* Unit tests:
+(* Tests:
 - Metoderne i Card klassen
-- CardDraw()
-- Randomizer()
+- CardDraw() og Randomizer()
 - PlayerNumber pattern matching (l. 115)
 - AINumber pattern matching (l. 129)
 - Metoderne i Player klassen
@@ -28,40 +27,97 @@ let card3 = new Card(1, "esspar")
 let card4 = new Card(10,"damerude")
 let card5 = new Card(3,"trerude")
 // Test dæk
-let mutable deck = [|card1;card2;card4;card5|]
+let mutable deck = [|card1;card2;card3;card4;card5|]
 
 // Test af metoderne i Card klassen
-printfn "name=%A, val=%A" card1.Name card1.Value
-printfn "name=%A, val=%A" card2.Name card2.Value
-printfn "name=%A, val=%A" card3.Name card3.Value
-card3.SetValue(11)
-printfn "new value for card3=%A" card3.Value
+let test1 = 
+    let exp_val = 8
+    let exp_name = "ottehjerte"
+    let value = card1.Value
+    let name = card1.Name
+    printfn "name=%A, val=%A success= %b" exp_name exp_val (exp_val=value && exp_name = name)
+
+let test2 = 
+    let exp_val = 10
+    let exp_name = "knægtklør"
+    let value = card2.Value
+    let name = card2.Name
+    printfn "name=%A, val=%A success= %b" exp_name exp_val (exp_val=value && exp_name = name)
+
+let test3 = 
+    let exp_val = 1
+    let exp_name = "esspar"
+    let value = card3.Value
+    let name = card3.Name 
+    printfn "name=%A, val=%A success= %b" exp_name exp_val (exp_val=value && exp_name = name)
+    
+let test4 = 
+    let new_exp = 11
+    card3.SetValue(11)
+    printfn "new value for card3=%A success=%b" new_exp (card3.Value = new_exp)
 
 
-(* Vi antager, at koden der genererer et tilfældigt tal (fra 
+//Test af CardDraw() og Randomizer()
+let test5 = 
+    // Test af CardDraw(x) og Randomizer(): fjernes kortene fra dækket?
+    // Dækket har først længden 5. Der fjernes et kort, så har det længden 4 osv.
+    
+    (* Vi antager, at koden der genererer et tilfældigt tal (fra 
 	opgavebeskrivelsen) virker. *)
-let gen = System.Random()
+    let gen = System.Random()
 
-let CardDraw (x : int) = 
-    // trækker et kort vha. indeksering i dæk arrayet.
-    let returncard = (deck.[x])
-    // Fjerner kortet fra dækket
-    deck <- deck |> Array.filter ((<>)deck.[x])
-    // returnerer kortet, der blev trukket
-    returncard
+    // Definerer funktionerne
+    let CardDraw (x : int) = 
+        // trækker et kort vha. indeksering i dæk arrayet.
+        let returncard = (deck.[x])
+        // Fjerner kortet fra dækket
+        deck <- deck |> Array.filter ((<>)deck.[x])
+        // returnerer kortet, der blev trukket
+        returncard
 
-let Randomizer() =
-    let x = gen.Next(0, deck.Length) // indtil sidste indeks i arrayet
-    CardDraw (x)
+    let Randomizer() =
+        let x = gen.Next(0, deck.Length) // indtil sidste indeks i arrayet
+        CardDraw (x)
+    //Tests
+    for i = 4 downto 1 do
+        let res = (Randomizer())
+        printfn "Deck length: %A success?=%b" (deck.Length) (deck.Length = i)
+    printfn ""
 
-// Test af CardDraw(x) og Randomizer(): fjernes kortene fra dækket?
-for i = 0 to 3 do
-    let res = (Randomizer())
-    printfn "%A" deck.Length
+let test6 =
+    // Test af CardDraw(x) og Randomizer(): returneres et kort?
+    //Tester med et nyt dæk, fordi nu har vi fjernet kort i forrige tests
+    let mutable deck2 = [|card1;card2;card3;card4;card5|]
+    
+    (* Vi antager, at koden der genererer et tilfældigt tal (fra 
+    opgavebeskrivelsen) virker. *)
+    let gen = System.Random()
+
+    //Definerer funktionerne
+    let CardDraw (x : int) =
+        // trækker et kort vha. indeksering i dæk arrayet.
+        let returncard = (deck2.[x])
+        // Fjerner kortet fra dækket
+        deck2 <- deck2 |> Array.filter ((<>)deck2.[x])
+        // returnerer kortet, der blev trukket
+        returncard
+
+    let Randomizer() =
+        let x = gen.Next(0, deck2.Length) // indtil sidste indeks i arrayet
+        CardDraw (x)
+
+    //Tests
+    //Den trækker kort tilfældigt så vi kan kun tjekke om kortets værdi 
+    //er i det korrekte interval (1 til 11, begge inklusive).
+    for i = 0 to 4 do
+        let res = (Randomizer()) 
+        printfn "Kortnavn: %A , kortværdi: %A success?=%b" res.Name res.Value (res.Value <= 11 && res.Value >= 1)
+    printfn ""
 
 // Test af brugerinput til antallet af spillere (PlayerNumber)
+// Vi må kigge i konsollen og se om det passer (det gør det).
 printfn "Hvor mange spillere? "
-let PlayerNumber : int array = [|2;-1;7|]
+let PlayerNumber : int array = [|2;-1;7|] //Test cases
 for i = 0 to PlayerNumber.Length-1 do
     try // Forventer at der håndteres den exception, der kastes (fejlbeskeden printes)
         match PlayerNumber.[i] with
@@ -73,3 +129,15 @@ for i = 0 to PlayerNumber.Length-1 do
 //Samme kode for antallet af AI, så det undlades i vores tests.
 
 // Test af metoderne i Player klassen
+
+(*
+VI MANGLER: 
+- Metoderne i Player klassen
+	- Hit() funktionalitet
+	- Stand() funktionalitet
+	- hvad sker der ved forkert input?
+- Metoderne i Dealer klassen
+- AI strategi ( = dealer strategi)
+- Vinder folk rigtigt?
+
+*)
