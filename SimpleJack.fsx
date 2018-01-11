@@ -188,18 +188,19 @@ for i = 0 to PlayerNumber-1 do
                      printfn ""
         | _ -> printfn "Ugyldigt input, prøv med: HIT eller STAND.\n"
 
-// AIs tur
-printfn "\n AIs tur"
-for i = 0 to AIarray.Length-1 do
-    // AI strategi: hit indtil værdien af korthånden er 17 eller over
-    while AIarray.[i].Handvalue() < 17 do
-        AIarray.[i].Hit()
-//Printer AIs hænder
-for i = 0 to AIarray.Length-1 do
-    printf "AI nummer %As hånd:" (i+1)
-    for j = 0 to AIarray.[i].Hand().Length-1 do
-        printf "%A, værdi: %A \t" (AIarray.[i].Hand().[j].Name) (AIarray.[i].Hand().[j].Value)
-    printfn "\n"
+// AIs tur, hvis de findes
+if AINumber <> 0 then
+    printfn "\nAIs tur"
+    for i = 0 to AIarray.Length-1 do
+        // AI strategi: hit indtil værdien af korthånden er 17 eller over
+        while AIarray.[i].Handvalue() < 17 do
+            AIarray.[i].Hit()
+    //Printer AIs hænder
+    for i = 0 to AIarray.Length-1 do
+        printf "AI nummer %As hånd:" (i+1)
+        for j = 0 to AIarray.[i].Hand().Length-1 do
+            printf "%A, værdi: %A \t" (AIarray.[i].Hand().[j].Name) (AIarray.[i].Hand().[j].Value)
+        printfn "\n"
 
 //Dealers tur
 printfn "Dealers tur"
