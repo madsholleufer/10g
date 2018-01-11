@@ -5,10 +5,7 @@
 - AINumber pattern matching (l. 129)
 - Metoderne i Player klassen
 	- Hit() funktionalitet
-	- hvad sker der ved forkert input?
 - Metoderne i Dealer klassen
-- AI strategi ( = dealer strategi)
-- Vinder folk rigtigt?
 *)
 
 //Definerer Card klassen
@@ -196,11 +193,3 @@ printfn "Korthåndværdi: %A, success=%b" (testPlayer.Handvalue()) ((testPlayer.
 // Printer korthånd (navne og værdier)
 for i = 0 to testPlayer.Hand().Length - 1 do
     printfn "Korthånd: \nnavn= %A , værdi=%A" (testPlayer.Hand().[i].Name) (testPlayer.Hand().[i].Value)
-
-
-(*
-VI MANGLER: 
-- AI strategi ( = dealer strategi)
-- Vinder folk rigtigt?
-
-*)
